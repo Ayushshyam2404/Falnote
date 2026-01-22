@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Falnote</title>
+    <link rel="icon" type="image/jpeg" href="logoc1.jpg">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: url('bw-image.png') center/cover fixed;
+            background-color: #000000;
+            color: #f5f5f7;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('bw-image.png') center/cover;
+            filter: blur(15px);
+            z-index: -2;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 40px 0;
+            position: relative;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            height: 60px;
+            width: auto;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+            position: relative;
+        }
+
+        .logo:hover {
+            opacity: 1;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: -0.02em;
+        }
+
+        h1.editable:hover {
+            color: #0a84ff;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #a1a1a6;
+            font-weight: 400;
+        }
+
+        .subtitle.editable:hover {
+            color: #0a84ff;
+        }
+
+        /* Control Menu */
+        .control-menu {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 999;
+            display: none;
+        }
+
+        .menu-btn {
+            background-color: #1d1d1f;
+            border: 1px solid #424245;
+            color: #f5f5f7;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .menu-btn:hover {
+            border-color: #86868b;
+            background-color: #424245;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 70px;
+            right: 0;
+            background-color: #1d1d1f;
+            border: 1px solid #424245;
+            border-radius: 12px;
+            min-width: 200px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            animation: slideDown 0.3s ease;
+        }
+
+        .dropdown-menu.active {
+            display: block;
+        }
+
+        /* Edit Dialog Modal */
+        .edit-dialog {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .edit-dialog.active {
+            display: flex;
+        }
+
+        .dialog-content {
+            background-color: #1d1d1f;
+            border: 1px solid #424245;
+            border-radius: 18px;
+            padding: 40px;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        .dialog-content h2 {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            color: #f5f5f7;
+        }
+
+        .upload-section {
+            margin-bottom: 25px;
+        }
+
+        .upload-label {
+            display: block;
+            font-size: 0.95rem;
+            color: #f5f5f7;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .upload-input {
+            display: none;
+        }
+
+        .upload-btn {
+            background-color: #424245;
+            border: 1px solid #424245;
+            color: #f5f5f7;
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-align: left;
+        }
+
+        .upload-btn:hover {
+            background-color: #515155;
+            border-color: #86868b;
+        }
+
+        .dialog-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .dialog-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .dialog-btn.save {
+            background-color: #0a84ff;
+            color: #ffffff;
+        }
+
+        .dialog-btn.save:hover {
+            background-color: #0071e3;
+        }
+
+        .dialog-btn.cancel {
+            background-color: #424245;
+            color: #f5f5f7;
+        }
+
+        .dialog-btn.cancel:hover {
+            background-color: #515155;
+        }
+
+        /* Edit Mode Styles */
+        body.edit-mode h1,
+        body.edit-mode h2,
+        body.edit-mode h3,
+        body.edit-mode .subtitle,
+        body.edit-mode .section-subtitle,
+        body.edit-mode .detail-value,
+        body.edit-mode .detail-label,
+        body.edit-mode ul li {
+            outline: 2px solid rgba(10, 132, 255, 0.3);
+            cursor: text;
+            border-radius: 4px;
+            padding: 4px 8px;
+        }
+
+        .editable-input {
+            background-color: #2a2a2c;
+            border: 1px solid #0a84ff;
+            color: #f5f5f7;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-size: inherit;
+            font-weight: inherit;
+        }
+
+        .editable-input:focus {
+            outline: none;
+            border-color: #0a84ff;
+            box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.1);
+        }
+
+        /* Text Formatting Toolbar */
+        .format-toolbar {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #2a2a2c;
+            border-radius: 8px;
+            align-items: center;
+        }
+
+        .format-btn {
+            background-color: #424245;
+            border: 1px solid #424245;
+            color: #f5f5f7;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+
+        .format-btn:hover {
+            background-color: #515155;
+            border-color: #86868b;
+        }
+
+        .format-btn.active {
+            background-color: #0a84ff;
+            border-color: #0a84ff;
+        }
+
+        .color-input {
+            width: 40px;
+            height: 32px;
+            border: 1px solid #424245;
+            border-radius: 6px;
+            cursor: pointer;
+            padding: 2px;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Apply animations to elements */
+        header {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .logo-container {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .logo {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        h1 {
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .subtitle {
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        section {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        section:nth-of-type(1) {
+            animation-delay: 0.3s;
+        }
+
+        section:nth-of-type(2) {
+            animation-delay: 0.5s;
+        }
+
+        section:nth-of-type(3) {
+            animation-delay: 0.7s;
+        }
+
+        section:nth-of-type(4) {
+            animation-delay: 0.9s;
+        }
+
+        h2 {
+            animation: slideInLeft 0.6s ease-out;
+        }
+
+        .section-subtitle {
+            animation: fadeIn 0.6s ease-out 0.2s both;
+        }
+
+        .snapshots {
+            animation: fadeInUp 0.8s ease-out 0.3s both;
+        }
+
+        .snapshot-card {
+            animation: scaleIn 0.6s ease-out;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .snapshot-card:nth-child(1) {
+            animation-delay: 0.4s;
+        }
+
+        .snapshot-card:nth-child(2) {
+            animation-delay: 0.5s;
+        }
+
+        .snapshot-card:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        .snapshot-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .list-section {
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        ul li {
+            animation: slideInLeft 0.6s ease-out forwards;
+        }
+
+        ul li:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+
+        ul li:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        ul li:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        ul li:nth-child(4) {
+            animation-delay: 0.5s;
+        }
+
+        ul li:nth-child(5) {
+            animation-delay: 0.6s;
+        }
+
+        .divider {
+            animation: fadeIn 0.8s ease-out 0.3s both;
+        }
+
+        footer {
+            animation: fadeInUp 0.8s ease-out 1.2s both;
+        }
+
+        /* Smooth transitions */
+        * {
+            transition: color 0.3s ease, background-color 0.3s ease;
+        }
+
+        /* Snapshot image hover animation */
+        .snapshot-image {
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .snapshot-card:hover .snapshot-image {
+            transform: scale(1.05);
+        }
+
+        /* Dialog animations */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dialog-content {
+            animation: slideUp 0.4s ease-out;
+        }
+
+        /* Modal animations */
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-image {
+            animation: fadeInScale 0.4s ease-out;
+        }
+
+        /* Button hover animations */
+        .upload-btn {
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .dialog-btn {
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .dialog-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .format-btn {
+            transition: all 0.3s ease;
+        }
+
+        .format-btn:hover {
+            transform: scale(1.05);
+        }
+
+        section {
+            margin-bottom: 80px;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            letter-spacing: -0.01em;
+        }
+
+        .section-subtitle {
+            color: #a1a1a6;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        /* Snapshots Section */
+        .snapshots {
+            display: flex;
+            gap: 30px;
+            overflow-x: auto;
+            padding: 20px 0;
+            scroll-behavior: smooth;
+        }
+
+        .snapshot-card {
+            flex-shrink: 0;
+            width: 350px;
+            background-color: #1d1d1f;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid #424245;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .snapshot-card:hover {
+            border-color: #86868b;
+            transform: translateY(-4px);
+        }
+
+        .snapshot-image {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, #424245, #1d1d1f);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #a1a1a6;
+            font-size: 0.95rem;
+            text-align: center;
+            padding: 0;
+            object-fit: cover;
+            border: none;
+            margin: 0;
+        }
+
+        .snapshot-content {
+            padding: 20px;
+        }
+
+        .snapshot-content h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .project-details {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .detail-label {
+            font-size: 0.85rem;
+            color: #86868b;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-value {
+            font-size: 0.95rem;
+            color: #f5f5f7;
+            font-weight: 500;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-image {
+            max-width: 100%;
+            max-height: 90vh;
+            border-radius: 12px;
+            object-fit: contain;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: none;
+            border: none;
+            color: #f5f5f7;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .modal-close:hover {
+            color: #a1a1a6;
+        }
+
+        /* Lists Section */
+        .list-section {
+            background-color: #1d1d1f;
+            border-radius: 18px;
+            padding: 40px;
+            border: 1px solid #424245;
+            margin-bottom: 30px;
+        }
+
+        .list-section h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        ul li {
+            padding: 12px 0;
+            padding-left: 30px;
+            position: relative;
+            color: #f5f5f7;
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        ul li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #0a84ff;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        ul li strong {
+            font-weight: 600;
+        }
+
+        .company-info {
+            color: #a1a1a6;
+            font-size: 0.95rem;
+            margin-top: 4px;
+        }
+
+        .divider {
+            height: 1px;
+            background-color: #424245;
+            margin: 40px 0;
+        }
+
+        footer {
+            text-align: center;
+            color: #86868b;
+            font-size: 0.9rem;
+            padding: 40px 0;
+            border-top: 1px solid #424245;
+            margin-top: 80px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            h1 {
+                font-size: 2.8rem;
+            }
+
+            .container {
+                padding: 30px 15px;
+            }
+
+            .snapshot-card {
+                width: 320px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            h2 {
+                font-size: 1.4rem;
+            }
+
+            .subtitle {
+                font-size: 1.2rem;
+            }
+
+            .container {
+                padding: 25px 15px;
+            }
+
+            section {
+                margin-bottom: 50px;
+            }
+
+            .snapshot-card {
+                width: 280px;
+                border-radius: 14px;
+            }
+
+            .snapshot-image {
+                height: 200px;
+                border-radius: 10px;
+                font-size: 0.85rem;
+            }
+
+            .snapshot-content {
+                padding: 15px;
+            }
+
+            .snapshot-content h3 {
+                font-size: 1.1rem;
+            }
+
+            .list-section {
+                padding: 25px 20px;
+                border-radius: 14px;
+            }
+
+            ul li {
+                padding: 10px 0;
+                padding-left: 25px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+                margin-bottom: 8px;
+            }
+
+            h2 {
+                font-size: 1.2rem;
+                margin-bottom: 20px;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            header {
+                padding: 25px 0;
+                margin-bottom: 40px;
+            }
+
+            .container {
+                padding: 20px 12px;
+            }
+
+            section {
+                margin-bottom: 35px;
+            }
+
+            .snapshots {
+                gap: 20px;
+                padding: 15px 0;
+            }
+
+            .snapshot-card {
+                width: 260px;
+                border-radius: 12px;
+            }
+
+            .snapshot-image {
+                height: 180px;
+                font-size: 0.8rem;
+                padding: 15px;
+            }
+
+            .snapshot-content {
+                padding: 12px;
+            }
+
+            .snapshot-content h3 {
+                font-size: 1rem;
+                margin-bottom: 6px;
+            }
+
+            .snapshot-content p {
+                font-size: 0.9rem;
+            }
+
+            .list-section {
+                padding: 20px 15px;
+                border-radius: 12px;
+            }
+
+            .list-section h3 {
+                font-size: 1.1rem;
+                margin-bottom: 15px;
+            }
+
+            ul li {
+                padding: 9px 0;
+                padding-left: 22px;
+                font-size: 0.95rem;
+            }
+
+            ul li:before {
+                font-size: 1.1rem;
+            }
+
+            .company-info {
+                font-size: 0.85rem;
+            }
+
+            .divider {
+                margin: 30px 0;
+            }
+
+            footer {
+                padding: 30px 0;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            h1 {
+                font-size: 1.6rem;
+            }
+
+            h2 {
+                font-size: 1.1rem;
+            }
+
+            .snapshot-card {
+                width: 240px;
+            }
+
+            .snapshot-image {
+                height: 160px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Edit Dialog Modal -->
+    <div class="edit-dialog" id="editDialog">
+        <div class="dialog-content">
+            <h2>Upload & Edit</h2>
+            
+            <div class="upload-section">
+                <label class="upload-label">
+                    <input type="checkbox" id="editModeToggle" style="margin-right: 8px;">
+                    Edit Mode
+                </label>
+            </div>
+
+            <div style="height: 1px; background-color: #424245; margin: 25px 0;"></div>
+            
+            <div class="upload-section">
+                <label class="upload-label">Card 1 Image</label>
+                <input type="file" id="card1Input" class="upload-input" accept="image/*">
+                <button class="upload-btn" onclick="document.getElementById('card1Input').click()">Select Image</button>
+            </div>
+
+            <div class="upload-section">
+                <label class="upload-label">Card 2 Image</label>
+                <input type="file" id="card2Input" class="upload-input" accept="image/*">
+                <button class="upload-btn" onclick="document.getElementById('card2Input').click()">Select Image</button>
+            </div>
+
+            <div class="upload-section">
+                <label class="upload-label">Card 3 Image</label>
+                <input type="file" id="card3Input" class="upload-input" accept="image/*">
+                <button class="upload-btn" onclick="document.getElementById('card3Input').click()">Select Image</button>
+            </div>
+
+            <div style="height: 1px; background-color: #424245; margin: 25px 0;"></div>
+
+            <div class="upload-section">
+                <label class="upload-label">Background Image</label>
+                <input type="file" id="bgImageInput" class="upload-input" accept="image/*">
+                <button class="upload-btn" onclick="document.getElementById('bgImageInput').click()">Select Image</button>
+            </div>
+
+            <div class="dialog-buttons">
+                <button class="dialog-btn save" onclick="saveEditDialog()">Save Changes</button>
+                <button class="dialog-btn cancel" onclick="closeEditDialog()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <img src="logo1.png" alt="Company Logo" class="logo" id="secretLogo">
+            </div>
+            <h1 id="mainTitle">Future Growth Strategy</h1>
+            <p class="subtitle" id="mainSubtitle">Sales Development & Target Market Analysis</p>
+        </header>
+
+        <!-- Construction Companies Starting Work -->
+        <section>
+            <h2 id="section1Title">Active Construction Projects (Next 3 Months)</h2>
+            <p class="section-subtitle" id="section1Subtitle">Companies beginning work at our property locations</p>
+            
+            <div class="snapshots">
+                <div class="snapshot-card" data-image="[IMAGE_URL_1]">
+                    <img src="[IMAGE_URL_1]" alt="Project Screenshot" class="snapshot-image">
+                    <div class="snapshot-content">
+                        <h3>[Project Name 1]</h3>
+                        <div class="project-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Location</span>
+                                <span class="detail-value">[City, State]</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Budget</span>
+                                <span class="detail-value">$[Amount]</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="snapshot-card" data-image="[IMAGE_URL_2]">
+                    <img src="[IMAGE_URL_2]" alt="Project Screenshot" class="snapshot-image">
+                    <div class="snapshot-content">
+                        <h3>[Project Name 2]</h3>
+                        <div class="project-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Location</span>
+                                <span class="detail-value">[City, State]</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Budget</span>
+                                <span class="detail-value">$[Amount]</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="snapshot-card" data-image="[IMAGE_URL_3]">
+                    <img src="[IMAGE_URL_3]" alt="Project Screenshot" class="snapshot-image">
+                    <div class="snapshot-content">
+                        <h3>[Project Name 3]</h3>
+                        <div class="project-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Location</span>
+                                <span class="detail-value">[City, State]</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Budget</span>
+                                <span class="detail-value">$[Amount]</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- Target Construction Companies -->
+        <section>
+            <h2 id="section2Title">Target Construction Companies</h2>
+            <p class="section-subtitle" id="section2Subtitle">From BW Lead Generation Report</p>
+            
+            <div class="list-section">
+                <ul>
+                    <li>
+                        <strong>[Company Name 1]</strong>
+                        <div class="company-info">Service type • Project focus area • Contact status</div>
+                    </li>
+                    <li>
+                        <strong>[Company Name 2]</strong>
+                        <div class="company-info">Service type • Project focus area • Contact status</div>
+                    </li>
+                    <li>
+                        <strong>[Company Name 3]</strong>
+                        <div class="company-info">Service type • Project focus area • Contact status</div>
+                    </li>
+                    <li>
+                        <strong>[Company Name 4]</strong>
+                        <div class="company-info">Service type • Project focus area • Contact status</div>
+                    </li>
+                    <li>
+                        <strong>[Company Name 5]</strong>
+                        <div class="company-info">Service type • Project focus area • Contact status</div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- LNR Targets -->
+        <section>
+            <h2 id="section3Title">Lead Generation & LNR Targets</h2>
+            <p class="section-subtitle" id="section3Subtitle">Companies and leads we're prioritizing</p>
+            
+            <div class="list-section">
+                <ul>
+                    <li>
+                        <strong>[LNR/Company Name 1]</strong>
+                        <div class="company-info">Why we're targeting them • Expected value • Timeline</div>
+                    </li>
+                    <li>
+                        <strong>[LNR/Company Name 2]</strong>
+                        <div class="company-info">Why we're targeting them • Expected value • Timeline</div>
+                    </li>
+                    <li>
+                        <strong>[LNR/Company Name 3]</strong>
+                        <div class="company-info">Why we're targeting them • Expected value • Timeline</div>
+                    </li>
+                    <li>
+                        <strong>[LNR/Company Name 4]</strong>
+                        <div class="company-info">Why we're targeting them • Expected value • Timeline</div>
+                    </li>
+                    <li>
+                        <strong>[LNR/Company Name 5]</strong>
+                        <div class="company-info">Why we're targeting them • Expected value • Timeline</div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- Bill William Sportsplex Events -->
+        <section>
+            <h2 id="section4Title">Upcoming Events</h2>
+            <p class="section-subtitle" id="section4Subtitle">Bill William Sportsplex & Nearby Schools/Colleges</p>
+            
+            <div class="list-section">
+                <h3 style="font-size: 1.2rem; margin-bottom: 20px;">Bill William Sportsplex</h3>
+                <ul style="margin-bottom: 30px;">
+                    <li>[Event Name] — [Date & Time]</li>
+                    <li>[Event Name] — [Date & Time]</li>
+                    <li>[Event Name] — [Date & Time]</li>
+                </ul>
+
+                <div style="height: 1px; background-color: #424245; margin: 25px 0;"></div>
+
+                <h3 style="font-size: 1.2rem; margin-bottom: 20px;">High Schools & Colleges</h3>
+                <ul>
+                    <li>[School/College Name] — [Event Name, Date & Time]</li>
+                    <li>[School/College Name] — [Event Name, Date & Time]</li>
+                    <li>[School/College Name] — [Event Name, Date & Time]</li>
+                    <li>[School/College Name] — [Event Name, Date & Time]</li>
+                </ul>
+            </div>
+        </section>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <img id="modalImage" src="" alt="Full size screenshot" class="modal-image">
+        </div>
+    </div>
+
+    <footer>
+        <p>Powered By Orange Falcon LLC (Formerly known as Orange Technolab LLC)</p>
+    </footer>
+
+    <script>
+        // State
+        let isEditMode = false;
+
+        // Dialog Functions
+        const editDialog = document.getElementById('editDialog');
+        const secretLogo = document.getElementById('secretLogo');
+        const editModeToggle = document.getElementById('editModeToggle');
+
+        // Edit Mode Toggle
+        editModeToggle.addEventListener('change', () => {
+            isEditMode = editModeToggle.checked;
+            document.body.classList.toggle('edit-mode', isEditMode);
+            
+            if (isEditMode) {
+                enableEditMode();
+            } else {
+                disableEditMode();
+            }
+        });
+
+        function enableEditMode() {
+            // Make main title editable
+            const mainTitle = document.getElementById('mainTitle');
+            mainTitle.addEventListener('click', (e) => {
+                if (isEditMode && !mainTitle.querySelector('input')) {
+                    e.stopPropagation();
+                    makeEditable(mainTitle);
+                }
+            });
+
+            // Make main subtitle editable
+            const mainSubtitle = document.getElementById('mainSubtitle');
+            mainSubtitle.addEventListener('click', (e) => {
+                if (isEditMode && !mainSubtitle.querySelector('input')) {
+                    e.stopPropagation();
+                    makeEditable(mainSubtitle);
+                }
+            });
+
+            // Make section titles and subtitles editable
+            document.querySelectorAll('h2[id*="Title"], .section-subtitle[id*="Subtitle"]').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    if (isEditMode && !el.querySelector('input')) {
+                        e.stopPropagation();
+                        makeEditable(el);
+                    }
+                });
+            });
+
+            // Make project details editable
+            document.querySelectorAll('.detail-value, .snapshot-content h3').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    if (isEditMode && !el.querySelector('input')) {
+                        e.stopPropagation();
+                        makeEditable(el);
+                    }
+                });
+            });
+
+            // Make company info (LNR descriptions) editable
+            document.querySelectorAll('.company-info').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    if (isEditMode && !el.querySelector('input')) {
+                        e.stopPropagation();
+                        makeEditable(el);
+                    }
+                });
+            });
+
+            // Make list item company names (strong tags) editable
+            document.querySelectorAll('ul li strong').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    if (isEditMode && !el.querySelector('input')) {
+                        e.stopPropagation();
+                        makeEditable(el);
+                    }
+                });
+            });
+
+            // Make regular list items editable
+            document.querySelectorAll('ul li').forEach(el => {
+                if (!el.querySelector('strong') && !el.querySelector('.company-info')) {
+                    el.addEventListener('click', (e) => {
+                        if (isEditMode && !el.querySelector('input')) {
+                            e.stopPropagation();
+                            makeEditable(el);
+                        }
+                    });
+                }
+            });
+        }
+
+        function makeEditable(element) {
+            const originalHTML = element.innerHTML;
+            const originalText = element.textContent;
+            
+            const container = document.createElement('div');
+            container.style.display = 'flex';
+            container.style.flexDirection = 'column';
+            container.style.gap = '10px';
+            
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'editable-input';
+            input.value = originalText;
+            
+            const toolbar = document.createElement('div');
+            toolbar.className = 'format-toolbar';
+            toolbar.style.pointerEvents = 'none';
+            
+            const boldBtn = document.createElement('button');
+            boldBtn.className = 'format-btn';
+            boldBtn.textContent = 'Bold';
+            boldBtn.type = 'button';
+            boldBtn.style.pointerEvents = 'auto';
+            
+            const italicBtn = document.createElement('button');
+            italicBtn.className = 'format-btn';
+            italicBtn.textContent = 'Italic';
+            italicBtn.type = 'button';
+            italicBtn.style.pointerEvents = 'auto';
+            
+            const colorInput = document.createElement('input');
+            colorInput.type = 'color';
+            colorInput.className = 'color-input';
+            colorInput.value = '#f5f5f7';
+            colorInput.style.pointerEvents = 'auto';
+            
+            toolbar.appendChild(boldBtn);
+            toolbar.appendChild(italicBtn);
+            toolbar.appendChild(colorInput);
+            
+            container.appendChild(input);
+            container.appendChild(toolbar);
+            
+            element.textContent = '';
+            element.appendChild(container);
+            input.focus();
+            input.select();
+
+            boldBtn.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                boldBtn.classList.toggle('active');
+                input.focus();
+            });
+            
+            italicBtn.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                italicBtn.classList.toggle('active');
+                input.focus();
+            });
+
+            colorInput.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            });
+
+            colorInput.addEventListener('change', (e) => {
+                e.stopPropagation();
+                input.focus();
+            });
+
+            const saveEdit = () => {
+                const text = input.value.trim();
+                if (text) {
+                    let formattedHTML = text;
+                    
+                    if (boldBtn.classList.contains('active')) {
+                        formattedHTML = `<strong>${formattedHTML}</strong>`;
+                    }
+                    if (italicBtn.classList.contains('active')) {
+                        formattedHTML = `<em>${formattedHTML}</em>`;
+                    }
+                    
+                    let colorStyle = '';
+                    if (colorInput.value !== '#f5f5f7') {
+                        colorStyle = `style="color: ${colorInput.value};"`;
+                    }
+                    
+                    if (colorStyle) {
+                        formattedHTML = `<span ${colorStyle}>${formattedHTML}</span>`;
+                    }
+                    
+                    element.innerHTML = formattedHTML;
+                    savePageData();
+                } else {
+                    element.innerHTML = originalHTML;
+                }
+            };
+
+            input.addEventListener('blur', saveEdit);
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    saveEdit();
+                }
+            });
+        }
+
+        function disableEditMode() {
+            // Nothing needed here
+        }
+
+        function closeEditDialog() {
+            editDialog.classList.remove('active');
+        }
+
+        function saveEditDialog() {
+            // Get all card inputs
+            const card1Input = document.getElementById('card1Input');
+            const card2Input = document.getElementById('card2Input');
+            const card3Input = document.getElementById('card3Input');
+            const bgImageInput = document.getElementById('bgImageInput');
+
+            let imagesLoaded = 0;
+            let totalImages = 0;
+
+            // Count total images to load
+            if (card1Input.files[0]) totalImages++;
+            if (card2Input.files[0]) totalImages++;
+            if (card3Input.files[0]) totalImages++;
+            if (bgImageInput.files[0]) totalImages++;
+
+            // If no images, save immediately
+            if (totalImages === 0) {
+                savePageData();
+                alert('Changes saved successfully!');
+                closeEditDialog();
+                return;
+            }
+
+            // Handle card images
+            [card1Input, card2Input, card3Input].forEach((input, idx) => {
+                if (input.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const cards = document.querySelectorAll('.snapshot-card');
+                        if (cards[idx]) {
+                            const img = cards[idx].querySelector('.snapshot-image');
+                            img.src = event.target.result;
+                            cards[idx].setAttribute('data-image', event.target.result);
+                        }
+                        imagesLoaded++;
+                        checkAllLoaded();
+                    };
+                    reader.readAsDataURL(input.files[0]);
+                }
+            });
+
+            // Handle background image
+            if (bgImageInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    document.body.style.backgroundImage = `url('${event.target.result}')`;
+                    imagesLoaded++;
+                    checkAllLoaded();
+                };
+                reader.readAsDataURL(bgImageInput.files[0]);
+            }
+
+            function checkAllLoaded() {
+                if (imagesLoaded === totalImages) {
+                    savePageData();
+                    alert('Changes saved successfully!');
+                    closeEditDialog();
+                }
+            }
+        }
+
+        // Setup image upload feedback
+        function setupImageUploadFeedback() {
+            const card1Input = document.getElementById('card1Input');
+            const card2Input = document.getElementById('card2Input');
+            const card3Input = document.getElementById('card3Input');
+            const bgImageInput = document.getElementById('bgImageInput');
+
+            [card1Input, card2Input, card3Input, bgImageInput].forEach((input, idx) => {
+                input.addEventListener('change', (e) => {
+                    if (input.files[0]) {
+                        const button = input.previousElementSibling;
+                        const fileName = input.files[0].name;
+                        button.textContent = fileName;
+                        button.style.backgroundColor = '#34C759';
+                        button.style.borderColor = '#34C759';
+                        button.style.color = '#ffffff';
+                    }
+                });
+            });
+        }
+
+        // Call on dialog open
+        secretLogo.addEventListener('click', () => {
+            editDialog.classList.add('active');
+            setupImageUploadFeedback();
+        });
+
+        // Close dialog when clicking outside
+        editDialog.addEventListener('click', (e) => {
+            if (e.target === editDialog) {
+                closeEditDialog();
+            }
+        });
+
+        // Modal functionality for viewing full images
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const snapshotCards = document.querySelectorAll('.snapshot-card');
+
+        snapshotCards.forEach(card => {
+            card.addEventListener('click', function(e) {
+                if (!isEditMode) {
+                    const imageUrl = this.getAttribute('data-image');
+                    if (imageUrl && !imageUrl.includes('[')) {
+                        modalImage.src = imageUrl;
+                        modal.classList.add('active');
+                        document.body.style.overflow = 'hidden';
+                    }
+                }
+            });
+        });
+
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Save page data to localStorage
+        function savePageData() {
+            const pageData = {
+                mainTitle: document.getElementById('mainTitle').innerHTML,
+                mainSubtitle: document.getElementById('mainSubtitle').innerHTML,
+                backgroundImage: document.body.style.backgroundImage,
+                sections: {},
+                content: {},
+                cardImages: {}
+            };
+
+            // Save card images
+            document.querySelectorAll('.snapshot-card').forEach((card, idx) => {
+                const img = card.querySelector('.snapshot-image');
+                if (img && img.src && img.src.startsWith('data:image')) {
+                    pageData.cardImages[`card${idx}`] = img.src;
+                }
+            });
+
+            // Save all editable elements
+            document.querySelectorAll('[id*="Title"], [id*="Subtitle"]').forEach(el => {
+                pageData.content[el.id] = el.innerHTML;
+            });
+
+            document.querySelectorAll('.detail-value, .detail-label, .snapshot-content h3').forEach(el => {
+                const id = el.id || el.className;
+                pageData.content[id] = el.innerHTML;
+            });
+
+            document.querySelectorAll('ul li').forEach((el, idx) => {
+                pageData.content[`listItem${idx}`] = el.innerHTML;
+            });
+
+            localStorage.setItem('pageData', JSON.stringify(pageData));
+            console.log('Page data saved:', pageData);
+        }
+
+        // Load saved data on page load
+        function loadPageData() {
+            const saved = localStorage.getItem('pageData');
+            if (saved) {
+                try {
+                    const pageData = JSON.parse(saved);
+                    
+                    // Restore main content
+                    if (pageData.mainTitle) {
+                        document.getElementById('mainTitle').innerHTML = pageData.mainTitle;
+                    }
+                    if (pageData.mainSubtitle) {
+                        document.getElementById('mainSubtitle').innerHTML = pageData.mainSubtitle;
+                    }
+
+                    // Restore all content
+                    Object.keys(pageData.content).forEach(key => {
+                        const elements = document.querySelectorAll(`[id="${key}"]`);
+                        elements.forEach(el => {
+                            el.innerHTML = pageData.content[key];
+                        });
+
+                        // Also try by class
+                        const byClass = document.querySelectorAll(`.${key}`);
+                        byClass.forEach(el => {
+                            el.innerHTML = pageData.content[key];
+                        });
+                    });
+
+                    // Restore card images
+                    if (pageData.cardImages) {
+                        Object.keys(pageData.cardImages).forEach(key => {
+                            const cardIdx = parseInt(key.replace('card', ''));
+                            const cards = document.querySelectorAll('.snapshot-card');
+                            if (cards[cardIdx]) {
+                                const img = cards[cardIdx].querySelector('.snapshot-image');
+                                img.src = pageData.cardImages[key];
+                                cards[cardIdx].setAttribute('data-image', pageData.cardImages[key]);
+                            }
+                        });
+                    }
+
+                    // Restore background
+                    if (pageData.backgroundImage) {
+                        document.body.style.backgroundImage = pageData.backgroundImage;
+                    }
+                } catch (e) {
+                    console.error('Error loading page data:', e);
+                }
+            }
+        }
+
+        // Load data when page loads
+        window.addEventListener('load', loadPageData);
+    </script>
