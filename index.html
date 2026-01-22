@@ -1562,55 +1562,68 @@
         // Load saved data on page load
         function loadPageData() {
             const saved = localStorage.getItem('pageData');
+            console.log('Loading saved data...', saved ? 'Found data' : 'No data found');
+            
             if (saved) {
                 try {
                     const pageData = JSON.parse(saved);
                     
-                    // Restore main content
-                    if (pageData.mainTitle) {
-                        document.getElementById('mainTitle').innerHTML = pageData.mainTitle;
-                    }
-                    if (pageData.mainSubtitle) {
-                        document.getElementById('mainSubtitle').innerHTML = pageData.mainSubtitle;
-                    }
+                    // Small delay to ensure DOM is ready
+                    setTimeout(() => {
+                        // Restore main content
+                        const mainTitle = document.getElementById('mainTitle');
+                        const mainSubtitle = document.getElementById('mainSubtitle');
+                        
+                        if (pageData.mainTitle && mainTitle) {
+                            mainTitle.innerHTML = pageData.mainTitle;
+                        }
+                        if (pageData.mainSubtitle && mainSubtitle) {
+                            mainSubtitle.innerHTML = pageData.mainSubtitle;
+                        }
 
-                    // Restore all content
-                    Object.keys(pageData.content).forEach(key => {
-                        const elements = document.querySelectorAll(`[id="${key}"]`);
-                        elements.forEach(el => {
-                            el.innerHTML = pageData.content[key];
+                        // Restore all content
+                        Object.keys(pageData.content || {}).forEach(key => {
+                            const elements = document.querySelectorAll(`[id="${key}"]`);
+                            elements.forEach(el => {
+                                el.innerHTML = pageData.content[key];
+                            });
+
+                            // Also try by class
+                            const byClass = document.querySelectorAll(`.${key}`);
+                            byClass.forEach(el => {
+                                el.innerHTML = pageData.content[key];
+                            });
                         });
 
-                        // Also try by class
-                        const byClass = document.querySelectorAll(`.${key}`);
-                        byClass.forEach(el => {
-                            el.innerHTML = pageData.content[key];
-                        });
-                    });
+                        // Restore card images
+                        if (pageData.cardImages) {
+                            Object.keys(pageData.cardImages).forEach(key => {
+                                const cardIdx = parseInt(key.replace('card', ''));
+                                const cards = document.querySelectorAll('.snapshot-card');
+                                if (cards[cardIdx]) {
+                                    const img = cards[cardIdx].querySelector('.snapshot-image');
+                                    if (img) {
+                                        img.src = pageData.cardImages[key];
+                                        cards[cardIdx].setAttribute('data-image', pageData.cardImages[key]);
+                                    }
+                                }
+                            });
+                        }
 
-                    // Restore card images
-                    if (pageData.cardImages) {
-                        Object.keys(pageData.cardImages).forEach(key => {
-                            const cardIdx = parseInt(key.replace('card', ''));
-                            const cards = document.querySelectorAll('.snapshot-card');
-                            if (cards[cardIdx]) {
-                                const img = cards[cardIdx].querySelector('.snapshot-image');
-                                img.src = pageData.cardImages[key];
-                                cards[cardIdx].setAttribute('data-image', pageData.cardImages[key]);
-                            }
-                        });
-                    }
-
-                    // Restore background
-                    if (pageData.backgroundImage) {
-                        document.body.style.backgroundImage = pageData.backgroundImage;
-                    }
+                        // Restore background
+                        if (pageData.backgroundImage) {
+                            document.body.style.backgroundImage = pageData.backgroundImage;
+                        }
+                        
+                        console.log('Data loaded successfully');
+                    }, 100);
                 } catch (e) {
                     console.error('Error loading page data:', e);
                 }
             }
         }
 
-        // Load data when page loads
+        // Load data immediately and on page load
+        loadPageData();
         window.addEventListener('load', loadPageData);
     </script>
