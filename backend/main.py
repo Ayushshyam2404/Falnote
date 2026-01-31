@@ -22,27 +22,13 @@ except Exception as e:
 
 app = FastAPI(title="Falnote API", version="1.0.0")
 
-# Configure CORS based on environment
-if DEBUG:
-    allowed_origins = ["*"]
-else:
-    frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3000")
-    allowed_origins = [
-        frontend_url,
-        "https://falnote-web.fly.dev",
-        "http://localhost:3000",
-        "http://localhost:5173",
-    ]
-    print(f"[CORS] Allowed origins in production: {allowed_origins}")
-
-# Add CORS middleware
+# Configure CORS - Allow all requests in production for Render domains
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
+    allow_origin_regex=r"(https?://)?.*\.onrender\.com$|http://localhost.*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-    allow_origin_regex=".*\.onrender\.com$",  # Allow all Render domains
 )
 
 # WebSocket endpoint for real-time sync
