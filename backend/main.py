@@ -8,6 +8,7 @@ from websocket_manager import manager
 import json
 import uuid
 import base64
+import os
 from config import DEBUG
 
 # Create tables
@@ -15,10 +16,17 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Falnote API", version="1.0.0")
 
+# Configure CORS based on environment
+if DEBUG:
+    allowed_origins = ["*"]
+else:
+    frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3000")
+    allowed_origins = [frontend_url]
+
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # For development; restrict in production
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
