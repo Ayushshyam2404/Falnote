@@ -1,3 +1,4 @@
+"""Falnote API - Note-taking application with real-time sync"""
 from fastapi import FastAPI, WebSocket, Depends, File, UploadFile, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
