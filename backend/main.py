@@ -66,8 +66,14 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
 
 @app.get("/")
 def read_root():
-    """Health check endpoint"""
-    return {"status": "ok", "message": "Falnote API is running"}
+    """Health check endpoint - always returns OK even if database is down"""
+    import os
+    env = os.getenv("ENVIRONMENT", "development")
+    return {
+        "status": "ok",
+        "message": "Falnote API is running",
+        "environment": env
+    }
 
 @app.get("/health")
 def health_check(db: Session = Depends(get_db)):
