@@ -373,6 +373,10 @@ async def startup_event():
     from database import SessionLocal
     db = SessionLocal()
     try:
+        # Create database tables
+        models.Base.metadata.create_all(bind=engine)
+        print("Database tables created/verified")
+        
         existing_cards = db.query(models.ProjectCard).count()
         if existing_cards == 0:
             default_cards = [
