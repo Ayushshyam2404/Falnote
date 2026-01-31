@@ -63,6 +63,21 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
 
 # REST API Endpoints
 
+@app.get("/")
+def read_root():
+    """Health check endpoint"""
+    return {"status": "ok", "message": "Falnote API is running"}
+
+@app.get("/health")
+def health_check(db: Session = Depends(get_db)):
+    """Health check endpoint with database connectivity"""
+    try:
+        # Test database connection
+        db.execute("SELECT 1")
+        return {"status": "healthy", "database": "connected"}
+    except Exception as e:
+        return {"status": "unhealthy", "database": f"connection failed: {str(e)}"}, 503
+
 @app.get("/api/page-data")
 def get_page_data(db: Session = Depends(get_db)):
     """Get current page data"""
