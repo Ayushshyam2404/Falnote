@@ -22,7 +22,12 @@ if DEBUG:
     allowed_origins = ["*"]
 else:
     frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3000")
-    allowed_origins = [frontend_url]
+    allowed_origins = [
+        frontend_url,
+        "https://falnote-web.fly.dev",
+        "http://localhost:3000",
+        "http://localhost:5173",
+    ]
 
 # Add CORS middleware
 app.add_middleware(

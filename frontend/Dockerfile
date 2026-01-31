@@ -4,6 +4,11 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
+
+# Build with Fly.io API URL
+ENV VITE_API_URL=https://falnote-api.fly.dev
+ENV VITE_WS_URL=wss://falnote-api.fly.dev
+
 RUN npm run build
 
 # Production stage

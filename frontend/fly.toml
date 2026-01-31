@@ -1,0 +1,32 @@
+# fly.toml file generated for falnote-web
+
+app = "falnote-web"
+primary_region = "iad"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  PORT = "3000"
+
+[[services]]
+  internal_port = 3000
+  protocol = "tcp"
+
+  [services.concurrency]
+    hard_limit = 10
+    soft_limit = 5
+
+  [[services.tcp_checks]]
+    grace_period = "5s"
+    interval = "15s"
+    timeout = "2s"
+
+[[services.ports]]
+  port = 80
+  handlers = ["http"]
+  force_https = true
+
+[[services.ports]]
+  port = 443
+  handlers = ["tls", "http"]
