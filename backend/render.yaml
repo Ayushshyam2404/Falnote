@@ -8,6 +8,8 @@ services:
     envVars:
       - key: DEBUG
         value: "false"
+      - key: ENVIRONMENT
+        value: production
       - key: FRONTEND_URL
         value: https://falnote-web.onrender.com
       - key: DATABASE_URL

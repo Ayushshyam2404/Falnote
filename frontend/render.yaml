@@ -4,7 +4,7 @@ services:
     runtime: node
     plan: free
     buildCommand: npm install && npm run build
-    startCommand: npm install -g serve && serve -s dist -l 3000
+    startCommand: npm install -g serve && serve -s dist -l $PORT
     envVars:
       - key: VITE_API_URL
         value: https://falnote-api.onrender.com

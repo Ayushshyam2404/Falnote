@@ -12,8 +12,13 @@ import base64
 import os
 from config import DEBUG
 
-# Create tables
-models.Base.metadata.create_all(bind=engine)
+# Create tables on startup (with error handling)
+try:
+    models.Base.metadata.create_all(bind=engine)
+    print("✓ Database tables initialized successfully")
+except Exception as e:
+    print(f"⚠ Database initialization warning: {e}")
+    print("Will attempt to create tables on first database request")
 
 app = FastAPI(title="Falnote API", version="1.0.0")
 
