@@ -2,10 +2,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from config import DATABASE_URL
+import os
 
-# Add SSL support for Railway PostgreSQL
+# Add SSL support for Railway PostgreSQL (only in production)
 db_url = DATABASE_URL
-if db_url and "postgresql" in db_url and "sslmode" not in db_url:
+is_production = os.getenv("ENVIRONMENT", "development") == "production"
+if is_production and db_url and "postgresql" in db_url and "sslmode" not in db_url:
     db_url += "?sslmode=require"
 
 engine = create_engine(db_url, pool_pre_ping=True)
