@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: falnote-web
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm install -g serve && serve -s dist -l 3000
+    envVars:
+      - key: VITE_API_URL
+        value: https://falnote-api.onrender.com
+      - key: VITE_WS_URL
+        value: wss://falnote-api.onrender.com
