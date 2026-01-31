@@ -33,6 +33,7 @@ else:
         "http://localhost:3000",
         "http://localhost:5173",
     ]
+    print(f"[CORS] Allowed origins in production: {allowed_origins}")
 
 # Add CORS middleware
 app.add_middleware(
@@ -41,6 +42,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    allow_origin_regex=".*\.onrender\.com$",  # Allow all Render domains
 )
 
 # WebSocket endpoint for real-time sync
